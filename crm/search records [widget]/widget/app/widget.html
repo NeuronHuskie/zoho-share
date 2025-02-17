@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zoho CRM Record Search Widget">
+    <title>Search Records</title>
+    <!-- External Dependencies -->
+    <script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
+    <!-- Stylesheets -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="./css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <!-- Main Widget Container -->
+    <div class="widget_popup_content">
+        <!-- Search and Results Section -->
+        <main class="widget_content_wrap" id="selectionScreen">
+            <!-- Search Controls -->
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="searchBox" 
+                    placeholder="Search records..." 
+                    aria-label="Search records"
+                >
+            </div>
+            
+            <!-- Filter Controls -->
+            <div class="filter-controls">
+                <button 
+                    type="button" 
+                    class="wgt_outlinePositiveBtn filter-btn" 
+                    onclick="clearAllFilters()"
+                >
+                    Clear Filter
+                </button>
+                <span 
+                    class="active-filters" 
+                    id="activeFiltersCount" 
+                    aria-live="polite"
+                ></span>
+            </div>
+            
+            <!-- Results Count -->
+            <div 
+                class="results-count" 
+                aria-live="polite"
+            ></div>
+            
+            <!-- Results Table -->
+            <div class="widget_table_wrapper">
+                <table id="recordsTable">
+                    <thead>
+                        <tr class="widget_table_head">
+                            <!-- Headers dynamically populated via JavaScript -->
+                        </tr>
+                    </thead>
+                    <tbody id="tbody"></tbody>
+                </table>
+                
+                <!-- No Results Message -->
+                <div 
+                    id="noRecordsDiv" 
+                    class="no-records-message" 
+                    role="status"
+                >
+                    No records found
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer Actions -->
+        <footer class="widget_footer_wrap">
+            <!-- Selection Status -->
+            <div class="widget_selection_wrapper">
+                <span 
+                    class="widget_selected_count" 
+                    id="selectedCount" 
+                    aria-live="polite"
+                >
+                    0 Records selected
+                </span>
+                <span 
+                    class="widget_clear_selection" 
+                    onclick="clearSelection()"
+                    role="button"
+                    tabindex="0"
+                >
+                    Clear
+                </span>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="widget_action_buttons">
+                <button 
+                    type="button" 
+                    class="wgt_onlineNegativeBtn" 
+                    onclick="cancelWidget()"
+                >
+                    Cancel
+                </button>
+                <button 
+                    type="button" 
+                    class="wgt_primaryBtn" 
+                    onclick="closeWidget()"
+                >
+                    Submit
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="./js/script.js"></script>
+</body>
+</html>
