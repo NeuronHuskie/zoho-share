@@ -1,0 +1,78 @@
+/* 
+    ╔──────────────────────────────────────────────────╗
+    ║               export button styles               ║
+    ╚──────────────────────────────────────────────────╝
+*/
+
+.export-container {
+    position: relative;
+    display: inline-block;
+}
+
+.export-btn {
+    background-color: #1e1e1f;
+    color: white;
+    border: 1px solid #1e1e1f;
+    border-radius: 30px;
+    /* padding: 7px 20px; */
+    padding: 7px 20px 7px 20px;
+    min-width: 120px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    transition-duration: 0.4s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.export-btn:hover {
+    background-color: #ffffff;
+    color: #1e1e1f;
+}
+
+.export-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    min-width: 130px;
+    margin-top: 2px;
+}
+
+.export-dropdown.show {
+    display: block;
+}
+
+.export-option {
+    padding: 10px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.export-option:last-child {
+    border-bottom: none;
+}
+
+.export-option:hover {
+    background-color: #1e1e1f;
+    color: #ffffff;
+}
+
+.export-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
+}

@@ -6,6 +6,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import url("buttons.css");
+@import url("export_data.css");
 
 /*
     ╔──────────────────────────────────────────────────╗
@@ -48,6 +49,25 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+}
+
+.widget_content_wrap.no-footer {
+    height: 100vh;
+}
+
+/* 
+    ╔──────────────────────────────────────────────────╗
+    ║                widget header                     ║
+    ╚──────────────────────────────────────────────────╝
+*/
+
+.widget-header {
+    color: #4d4d4d;
+    padding: 12px 15px; 
+    margin-bottom: 15px;
+    border-radius: 5px;
+    font-weight: 500;
+    font-size: 14px; 
 }
 
 /* 
@@ -117,7 +137,7 @@ table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    font-size: 14px;
+    font-size: 14px; /* Default font size - can be overridden by JavaScript */
 }
 
 thead {
@@ -139,15 +159,26 @@ td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
-    background: #fff;
+    transition: background-color 0.2s ease; 
 }
 
-tr:last-child td {
+/* Alternating row colors */
+tbody tr:nth-child(odd) td {
+    background-color: #ffffff; /* White for odd rows */
+}
+
+tbody tr:nth-child(even) td {
+    background-color: #f9f9f9; /* Light gray for even rows */
+}
+
+/* Hover effect - overrides alternating colors */
+tbody tr:hover td {
+    background-color: #e3f2fd !important; /* Light blue on hover */
+    cursor: pointer;
+}
+
+tbody tr:last-child td {
     border-bottom: none;
-}
-
-tr:hover td {
-    background-color: #f8f9fa;
 }
 
 .sort-icon {
@@ -275,6 +306,96 @@ input[type="checkbox"] {
 
 /* 
     ╔──────────────────────────────────────────────────╗
+    ║              pagination styles                   ║
+    ╚──────────────────────────────────────────────────╝
+*/
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    background: #f5f5f5;
+    border-top: 1px solid #ddd;
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+}
+
+.pagination-btn {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 13px;
+    transition: all 0.2s;
+    outline: none;
+    user-select: none;
+    font-family: 'Inter', sans-serif;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: #f0f0f0;
+    border-color: #999;
+}
+
+.pagination-btn:active:not(:disabled) {
+    background: #e0e0e0;
+    transform: translateY(1px);
+}
+
+.pagination-btn:disabled {
+    background: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+    border-color: #ddd;
+    opacity: 0.6;
+}
+
+.pagination-info {
+    font-size: 13px;
+    color: #666;
+    margin: 0 10px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+}
+
+.loading-indicator {
+    text-align: center;
+    padding: 10px;
+    color: #666;
+    font-style: italic;
+    background: #f9f9f9;
+    border-top: 1px solid #ddd;
+    font-family: 'Inter', sans-serif;
+    flex-shrink: 0;
+}
+
+/* 
+    ╔──────────────────────────────────────────────────╗
+    ║            dynamic visibility controls           ║
+    ╚──────────────────────────────────────────────────╝
+*/
+
+/* Hide selection checkboxes when disabled */
+.hide-checkboxes input[type="checkbox"] {
+    display: none;
+}
+
+/* Hide widget footer when disabled */
+.hide-footer .widget_footer_wrap {
+    display: none;
+}
+
+/* Hide selection wrapper when checkboxes are disabled but buttons are shown */
+.hide-selection .widget_selection_wrapper {
+    display: none;
+}
+
+/* 
+    ╔──────────────────────────────────────────────────╗
     ║             responsive styles                    ║
     ╚──────────────────────────────────────────────────╝
 */
@@ -283,6 +404,10 @@ input[type="checkbox"] {
     .widget_content_wrap {
         padding: 15px;
         height: calc(100vh - 100px);
+    }
+
+    .widget_content_wrap.no-footer {
+        height: 100vh;
     }
 
     .widget_footer_wrap {
@@ -300,5 +425,25 @@ input[type="checkbox"] {
 
     .widget_selection_wrapper {
         margin-bottom: 10px;
+    }
+
+    .pagination-controls {
+        flex-wrap: wrap;
+        gap: 5px;
+        padding: 8px 0;
+    }
+
+    .pagination-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .pagination-info {
+        font-size: 12px;
+        margin: 0 5px;
+    }
+
+    #searchBox {
+        width: 100%;
     }
 }

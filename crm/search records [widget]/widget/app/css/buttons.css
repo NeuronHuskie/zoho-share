@@ -1,20 +1,20 @@
-/*  
-    █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
-    █                            BUTTON STYLES                             █
-    █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
+/* 
+    ╔──────────────────────────────────────────────────╗
+    ║                  button styles                   ║
+    ╚──────────────────────────────────────────────────╝
 */
 
-.wgt_primaryBtn, 
-.wgt_outlinePositiveBtn, 
-.wgt_defaultBtn, 
-.wgt_backBtn, 
-.wgt_cancelBtn, 
-.wgt_negativeBtn, 
-.wgt_onlineNegativeBtn {
-    border-radius: 6px;
+.primary-btn, 
+.positive-outline-btn, 
+.default-btn, 
+.back-btn, 
+.cancel-btn, 
+.negative-btn, 
+.negative-outline-btn {
+    border-radius: 30px;
     padding: 7px 20px 7px 20px;
     cursor: pointer;
-    min-width: 90px;
+    min-width: 120px;
     font-family: 'Inter', sans-serif;
     font-weight: 500;
     font-size: 15px;
@@ -27,26 +27,26 @@
     ╚──────────────────────────────────────────────────╝
 */
 
-.wgt_primaryBtn {
+.primary-btn {
     background-color: #2196f3;
     color: white;
     border: 1px solid #2196f3;
     transition-duration: 0.4s;
 }
 
-.wgt_primaryBtn:hover {
+.primary-btn:hover {
     background-color: #ffffff;
     color: #2196f3;
 }
 
-.wgt_outlinePositiveBtn {
+.positive-outline-btn {
     background-color: #edf6ff;
     color: #338cf0;
     border: 1px solid #338cf0;
     transition-duration: 0.4s;
 }
 
-.wgt_outlinePositiveBtn:hover {
+.positive-outline-btn:hover {
     background-color: #338cf0;
     color: #edf6ff;
 }
@@ -57,14 +57,14 @@
     ╚──────────────────────────────────────────────────╝
 */
 
-.wgt_defaultBtn {
+.default-btn {
     background-color: #f4f7fb;
     color: #000000;
     border: 1px solid #d0d4df;
     transition-duration: 0.4s;
 }
 
-.wgt_defaultBtn:hover {
+.default-btn:hover {
     background-color: #dbdbdb;
     color: #000000;
 }
@@ -75,38 +75,38 @@
     ╚──────────────────────────────────────────────────╝
 */
 
-.wgt_cancelBtn {
+.cancel-btn {
     background-color: #f4f7fb;
     color: #666;
     border: 1px solid #d0d4df;
     transition-duration: 0.4s;
 }
 
-.wgt_cancelBtn:hover {
+.cancel-btn:hover {
     background-color: #e2e4e6;
     color: #000000;
 }
 
-.wgt_negativeBtn {
+.negative-btn {
     background-color: #f03b4c;
     color: #ffffff;
     border: 1px solid #f03b4c;
     transition-duration: 0.4s;
 }
 
-.wgt_negativeBtn:hover {
+.negative-btn:hover {
     background-color: #ffffff;
     color: #f03b4c;
 }
 
-.wgt_onlineNegativeBtn {
+.negative-outline-btn {
     background-color: #fff2f3;
     color: #f03b4c;
     border: 1px solid #f03b4c;
     transition-duration: 0.4s;
 }
 
-.wgt_onlineNegativeBtn:hover {
+.negative-outline-btn:hover {
     background-color: #f03b4c;
     color: #fff2f3;
 }
@@ -117,7 +117,7 @@
     ╚──────────────────────────────────────────────────╝
 */
 
-.wgt_clearSelProducts {
+.clear-selection-btn {
     color: #2196f3;
     font-weight: 500;
     text-decoration: underline;
@@ -125,6 +125,6 @@
     margin-left: 8px;
 }
 
-.wgt_clearSelProducts:hover {
+.clear-selection-btn:hover {
     text-decoration: underline overline #2196f3;
 }
