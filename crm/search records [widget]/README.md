@@ -52,73 +52,73 @@ The widget is configured by passing a `data` object within the `ZDK.Client.openP
     ]
     ```
 
-#### *`<return_ids_only>`*
+#### `<return_ids_only>`
 -   **Type:** `Boolean`
 -   **Optional:** Yes (Default: `false`)
 -   **Description:** If `true`, the widget will return an array of selected record IDs (strings). If `false`, it will return an array of full record objects.
 -   **Example:** `true`
 
-#### *`<selection_limit>`*
+#### `<selection_limit>`
 -   **Type:** `Number`
 -   **Optional:** Yes (Default: `25`)
 -   **Description:** The maximum number of records a user is allowed to select.
 -   **Example:** `50`
 
-#### *`<static_data>`*
+#### `<static_data>`
 -   **Type:** `Array of Objects`
 -   **Optional:** Yes
 -   **Description:** An array of record objects to populate the table. When this is provided, the widget runs in "Static Mode" and will not make any API calls to fetch data. The `module` parameter is ignored.
 -   **Example:** `[{ "id": "1", "Name": "Record A" }, { "id": "2", "Name": "Record B" }]`
 
-#### *`<show_all_records_on_load>`*
+#### `<show_all_records_on_load>`
 -   **Type:** `Boolean`
 -   **Optional:** Yes (Default: `false`)
 -   **Description:** If `true`, the widget will automatically fetch and display the first page of records when it loads. If `false`, the user must perform a search first. Ignored in static mode.
 -   **Example:** `true`
 
-#### *`<predefined_criteria>`*
+#### `<predefined_criteria>`
 -   **Type:** `String`
 -   **Optional:** Yes
 -   **Description:** A Zoho CRM criteria string to pre-filter the results shown by `show_all_records_on_load`.
 -   **Example:** `"(Company:equals:Sentara Health)"`
 
-#### *`<show_selection_checkboxes>`*
+#### `<show_selection_checkboxes>`
 -   **Type:** `Boolean`
 -   **Optional:** Yes (Default: `true`)
 -   **Description:** If `false`, hides the selection checkboxes. In this mode, clicking "Submit" will return all currently visible (filtered) records.
 -   **Example:** `false`
 
-#### *`<show_widget_buttons>`*
+#### `<show_widget_buttons>`
 -   **Type:** `Boolean`
 -   **Optional:** Yes (Default: `true`)
 -   **Description:** If `false`, hides the entire footer containing the "Submit" and "Cancel" buttons. Ideal for a read-only view.
 -   **Example:** `false`
 
-#### *`<default_sort_field>`*
+#### `<default_sort_field>`
 -   **Type:** `String`
 -   **Optional:** Yes
 -   **Description:** The `api_name` of the field to sort by when data is first loaded.
 -   **Example:** `'Name'`
 
-#### *`<default_sort_order>`*
+#### `<default_sort_order>`
 -   **Type:** `String`
 -   **Optional:** Yes (Default: `'asc'`)
 -   **Description:** The sort order for the `default_sort_field`. Can be `'asc'` or `'desc'`.
 -   **Example:** `'desc'`
 
-#### *`<table_font_size>`*
+#### *`<table_font_size>`
 -   **Type:** `Number`
 -   **Optional:** Yes (Default: `14`)
 -   **Description:** The font size (in pixels) for the data table content.
 -   **Example:** `12`
 
-#### *`<max_records_per_page>`*
+#### `<max_records_per_page>`
 -   **Type:** `Number`
 -   **Optional:** Yes (Default: `200`)
 -   **Description:** The number of records to fetch per API call (max 200).
 -   **Example:** `100`
 
-#### *`<close_on_escape>`*
+#### `<close_on_escape>`
 -   **Type:** `Boolean`
 -   **Optional:** Yes (Default: `true`)
 -   **Description:** If `true`, the widget will close when the user presses the Escape key.
