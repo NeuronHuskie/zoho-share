@@ -1,0 +1,382 @@
+/*  
+    █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+    █                      variables & global styles                       █
+    █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█ 
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    /* fonts */
+    --font-family-base: 'Inter', sans-serif;
+
+    /* colors */
+    --color-primary: #2196f3;
+    --color-primary-dark: #1976d2;
+    --color-success: #4caf50;
+    --color-warning: #ff9800;
+    --color-error: #f44336;
+    --color-error-dark: #d32f2f;
+    --color-question: #9c27b0;
+    --color-text-dark: #000000;
+    --color-text-default: #333;
+    --color-text-light: #666;
+    --color-background: #f9f9f9;
+    --color-border: #ddd;
+
+    /* spacing & sizing */
+    --padding-container: 15px;
+    --padding-form-wrapper: 20px;
+    --padding-field: 10px;
+    --gap-form: 15px;
+    --radius-default: 4px;
+    --radius-buttons: 10px;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: var(--font-family-base);
+    background-color: var(--color-background);
+    box-sizing: border-box;
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+/* 
+    █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+    █                         layout & structure                           █
+    █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
+*/
+
+.widget-wrapper {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: var(--padding-container);
+    transition: background-color 0.3s ease;
+}
+
+#dynamicContent {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-bottom: 10px;
+    min-height: 0;
+    padding-right: 5px; 
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 10px;
+    flex-shrink: 0;
+}
+
+.form-wrapper {
+    padding: var(--padding-form-wrapper);
+    height: 100%;
+    overflow-y: auto;
+}
+
+.dropdown-container {
+    padding: var(--padding-form-wrapper);
+    height: 100%;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: var(--radius-default);
+}
+
+/*
+    █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+    █                        GENERAL FORM STYLING                          █
+    █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
+*/
+
+#dynamicForm {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-form);
+}
+
+.field-group {
+    margin: 0;
+}
+
+/* base styles for labels */
+.field-group label,
+.field-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--color-text-default);
+    font-size: 13px;
+}
+
+/* base styles for all input-like fields */
+.field-group input,
+.field-group select,
+.field-group textarea,
+.file-name-display {
+    width: 100%;
+    padding: var(--padding-field);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-default);
+    font-size: 14px;
+    font-family: var(--font-family-base);
+    background-color: white;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* focus styles for all input-like fields */
+.field-group input:focus,
+.field-group select:focus,
+.field-group textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+.field-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* checkbox & radio groups */
+.checkbox-group,
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.checkbox-item,
+.radio-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-item input[type="checkbox"],
+.radio-item input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.checkbox-label,
+.radio-label {
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+/* multi-select specifics */
+select[multiple] {
+    min-height: 120px;
+}
+select[multiple] option {
+    padding: 4px 8px;
+}
+select[multiple] option:checked {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+
+/* 
+    █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+    █                     COMPONENT-SPECIFIC STYLES                        █
+    █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
+*/
+
+.widget-title {
+    color: var(--color-text-dark);
+    margin: 0 0 20px 0;
+    font-weight: 600;
+    text-align: left;
+    font-size: 17px; 
+}
+
+/* --- message component --- */
+.message-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 20px;
+    height: 100%;
+}
+
+.message-text { line-height: 1.6; font-size: 15px; }
+.message-icon { font-size: 30px; margin-bottom: 20px; }
+
+/* message backgrounds & text colors */
+.message-info-bg { background-color: #e3f2fd; }
+.message-info-bg h2, .message-info-bg .message-text { color: #1565c0; }
+
+.message-success-bg { background-color: #e8f5e8; }
+.message-success-bg h2, .message-success-bg .message-text { color: #2e7d32; }
+
+.message-warning-bg { background-color: #fff3cd; }
+.message-warning-bg h2, .message-warning-bg .message-text { color: #ef6c00; }
+
+.message-error-bg { background-color: #ffebee; }
+.message-error-bg h2, .message-error-bg .message-text { color: #c62828; }
+
+.message-question-bg { background-color: #f3e5f5; }
+.message-question-bg h2, .message-question-bg .message-text { color: #7b1fa2; }
+
+/* --- file upload component --- */
+.file-upload-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.file-upload-wrapper input[type="file"] { display: none; } /* hide original input */
+
+.file-upload-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: var(--padding-field);
+    padding-left: 15px; padding-right: 15px; 
+    background-color: #f4f7fb;
+    border: 1px solid #d0d4df;
+    border-radius: var(--radius-default);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+.file-upload-label:hover { background-color: #e8ecf1; border-color: #b0b5c3; }
+.file-upload-label .fa { font-size: 16px; color: #555; }
+.file-name-display { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-name-display:empty::before { content: attr(data-placeholder); color: #999; font-style: italic; }
+
+.file-upload-wrapper.file-selected .file-upload-label { background-color: #e8f5e8; border-color: var(--color-success); color: #2e7d32; }
+.file-upload-wrapper.file-selected .file-upload-label .fa { color: #2e7d32; }
+
+/* ╔──────────────────────────────────────────────────╗ */
+/* ║         upload status message component          ║ */
+/* ╚──────────────────────────────────────────────────╝ */
+
+#uploadStatusMessage {
+    display: none; /* Hidden by default, controlled by JS */
+    text-align: center;
+    margin-top: var(--gap-form);
+    padding: var(--padding-field);
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: var(--radius-default);
+    border: 1px solid transparent;
+}
+#uploadStatusMessage.status-success { display: block; background-color: #e8f5e8; border-color: var(--color-success); color: #2e7d32; }
+#uploadStatusMessage.status-error { display: block; background-color: #ffebee; border-color: var(--color-error); color: #c62828; }
+#uploadStatusMessage.status-info { display: block; background-color: #e3f2fd; border-color: var(--color-primary); color: #1565c0; }
+#uploadStatusMessage.status-warning { display: block; background-color: #fff3cd; border-color: var(--color-warning); color: #ef6c00; }
+
+
+/*
+    █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+    █                            BUTTON STYLES                             █
+    █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
+*/
+
+/* base styles for all buttons */
+.primary-btn,
+.negative-outline-btn {
+    border-radius: var(--radius-buttons);
+    padding: 8px 16px;
+    cursor: pointer;
+    min-width: 80px;
+    font-weight: 600;
+    font-size: 14px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+.primary-btn:disabled {
+    background-color: #b0bec5;
+    border-color: #b0bec5;
+    cursor: not-allowed;
+}
+
+/* primary button */
+.primary-btn { background-color: var(--color-primary); color: white; border-color: var(--color-primary); }
+.primary-btn:hover { background-color: var(--color-primary-dark); }
+
+/* themed primary buttons (success, warning, error) */
+.success-btn { background-color: var(--color-success) !important; border-color: var(--color-success) !important; }
+.success-btn:hover { background-color: #388e3c !important; }
+.warning-btn { background-color: var(--color-warning) !important; border-color: var(--color-warning) !important; }
+.warning-btn:hover { background-color: #f57c00 !important; }
+.error-btn { background-color: var(--color-error) !important; border-color: var(--color-error) !important; }
+.error-btn:hover { background-color: var(--color-error-dark) !important; }
+
+/* cancel / outline negative button */
+.negative-outline-btn { background-color: transparent; color: var(--color-text-light); border-color: var(--color-border); }
+.negative-outline-btn:hover { background-color: #f1f1f1; color: var(--color-text-default); }
+
+
+/*
+    █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+    █                        UTILITY & VALIDATION                          █
+    █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
+*/
+
+.required-indicator {
+    color: var(--color-error);
+    font-weight: bold;
+    padding-left: 2px;
+}
+
+.field-error {
+    border-color: var(--color-error) !important;
+    background-color: #fff5f5;
+}
+
+.error-message {
+    color: var(--color-error);
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+
+/*
+    █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+    █                          RESPONSIVE DESIGN                           █
+    █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
+*/
+
+@media (min-width: 400px) {
+    .checkbox-group, .radio-group {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 600px) {
+    .container { padding: 10px; }
+    .form-wrapper { padding: 15px; }
+    .message-content { padding: 30px 15px; }
+    .button-container { flex-direction: column; gap: 8px; }
+    .primary-btn, .negative-outline-btn { width: 100%; }
+}
