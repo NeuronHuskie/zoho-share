@@ -56,6 +56,9 @@ function buildDynamicInterface() {
         case 'dropdown':
             buildDropdownWidget();
             break;
+        case 'confirmation':
+            buildConfirmationWidget();
+            break;
         default:
             buildMessageWidget();
     }
@@ -75,15 +78,64 @@ function buildMessageWidget() {
     const container = document.querySelector('.container');
 
     if (container) {
-        container.className = 'container'; // Reset classes
+        container.className = 'container'; // reset classes
         container.classList.add(`message-${messageType}-bg`);
+    }
+
+    let messageHtml;
+    if (widgetConfig.enable_markdown === true && typeof marked !== 'undefined' && typeof marked.parse === 'function') {
+        messageHtml = marked.parse(message);
+    } else {
+        messageHtml = `<p>${message}</p>`;
     }
 
     const iconHtml = showIcon ? `<div class="message-icon ${typeConfig.iconClass}">${typeConfig.icon}</div>` : '';
 
-    contentContainer.innerHTML = `<div class="message-content"> ${iconHtml} ${title ? `<h2 class="widget-title">${title}</h2>` : ''} <p class="message-text">${message}</p> </div>`;
+    contentContainer.innerHTML = ` <div class="message-content"> ${iconHtml} ${title ? `<h2 class="widget-title">${title}</h2>` : ''} <div class="message-text">${messageHtml}</div> </div> `;
    
     buttonContainer.innerHTML = `<button class="${typeConfig.buttonClass}" onclick="closeWidget()">${typeConfig.buttonText}</button>`;
+}
+
+/**
+ * Builds a confirmation dialog with a message and custom buttons.
+ */
+function buildConfirmationWidget() {
+    const contentContainer = document.getElementById('dynamicContent');
+    const buttonContainer = document.getElementById('buttonContainer');
+    resetContainerBackground();
+
+    const title = widgetConfig.title;
+    const message = widgetConfig.message || 'Please confirm your action.';
+    const buttons = widgetConfig.buttons || ['Cancel', 'OK']; // default button names
+
+    let messageHtml;
+    if (widgetConfig.enable_markdown === true && typeof marked !== 'undefined' && typeof marked.parse === 'function') {
+        messageHtml = marked.parse(message);
+    } else {
+        messageHtml = `<p>${message}</p>`;
+    }
+
+    // build the message part of the ui (reuses existing message styles)
+    contentContainer.innerHTML = ` <div class="message-content"> ${title ? `<h2 class="widget-title">${title}</h2>` : ''} <div class="message-text">${messageHtml}</div> </div> `;
+
+    // dynamically build the buttons
+    let buttonsHTML = '';
+    buttons.forEach(buttonText => {
+        let buttonClass = 'primary-btn'; // default style is the primary action button
+        const lowerCaseText = buttonText.toLowerCase();
+
+        // style buttons based on their text
+        if (['delete', 'remove', 'discard', 'yes, delete'].includes(lowerCaseText)) {
+            buttonClass = 'destructive-btn';
+        } else if (['cancel', 'no', 'later'].includes(lowerCaseText)) {
+            buttonClass = 'negative-outline-btn';
+        }
+        
+        // add the button with an onclick event that calls our new handler
+        buttonsHTML += `<button class="${buttonClass}" onclick="closeWithSelection('${buttonText}')">${buttonText}</button>`;
+    });
+
+    buttonContainer.innerHTML = buttonsHTML;
 }
 
 /**
@@ -348,6 +400,23 @@ async function submitForm() {
 }
 
 /**
+ * Closes the widget and returns the text of the selected button.
+ * Used by the 'confirmation' and 'dropdown' modes.
+ * @param {String} selection The text of the button or option that was chosen.
+ */
+function closeWithSelection(selection) {
+    // for dropdowns, the data is structured. for confirmations, it's just the string
+    const isDropdown = widgetConfig.type === 'dropdown';
+    const payload = {
+        success: true,
+        type: widgetConfig.type,
+        [isDropdown ? 'data' : 'selection']: selection
+    };
+    
+    $Client.close(payload);
+}
+
+/**
  * Handles the submission of the dropdown selection widget
  */
 function submitSelection() {
@@ -363,7 +432,7 @@ function submitSelection() {
         selectedData = { actual_value: select.value, display_value: select.options[select.selectedIndex].text };
     }
 
-    $Client.close({ type: 'dropdown', data: selectedData, success: true });
+    closeWithSelection(selectedData);
 }
 
 /**
@@ -581,9 +650,9 @@ function fileToBlob(file) {
 function getMessageTypeConfig(messageType) {
     const configs = {
         info: { icon: 'ℹ️', iconClass: 'icon-info', buttonClass: 'primary-btn', buttonText: 'OK' },
-        success: { icon: '✅', iconClass: 'icon-success', buttonClass: 'primary-btn success-btn', buttonText: 'Great!' },
-        warning: { icon: '⚠️', iconClass: 'icon-warning', buttonClass: 'primary-btn warning-btn', buttonText: 'Got it' },
-        error: { icon: '❌', iconClass: 'icon-error', buttonClass: 'primary-btn error-btn', buttonText: 'Close' },
+        success: { icon: '✅', iconClass: 'icon-success', buttonClass: 'primary-btn success-btn', buttonText: 'OK' },
+        warning: { icon: '⚠️', iconClass: 'icon-warning', buttonClass: 'primary-btn warning-btn', buttonText: 'OK' },
+        error: { icon: '❌', iconClass: 'icon-error', buttonClass: 'primary-btn error-btn', buttonText: 'OK' },
         question: { icon: '❓', iconClass: 'icon-question', buttonClass: 'primary-btn', buttonText: 'OK' }
     };
     return configs[messageType] || configs.info;
@@ -594,21 +663,52 @@ function getMessageTypeConfig(messageType) {
 function forceFocus() {
     setTimeout(() => focusFirstElement(), 50);
     setTimeout(() => focusFirstElement(), 150);
+    setTimeout(() => focusFirstElement(), 300);
+    setTimeout(() => focusFirstElement(), 500);
 }
 
 function focusFirstElement() {
-    const selectors = ['input[type="text"]','input[type="email"]','input[type="tel"]','input[type="number"]','input[type="password"]','input[type="url"]','input[type="date"]','input[type="time"]','input[type="datetime-local"]','textarea','select','input[type="file"]','input[type="checkbox"]','input[type="radio"]'];
-    for (let selector of selectors) {
-        const element = document.querySelector(selector);
-        if (element && !element.disabled && !element.readOnly) {
-            element.focus();
-            if (document.activeElement === element) {
-                if (['text', 'email', 'tel', 'url', 'password', 'number'].includes(element.type)) {
-                    element.select();
+    let attempts = 0;
+    const maxAttempts = 5;
+
+    function tryFocus() {
+        attempts++;
+        const selectors = ['input[type="text"]','input[type="email"]','input[type="tel"]','input[type="number"]','input[type="password"]','input[type="url"]','input[type="date"]','input[type="time"]','input[type="datetime-local"]','textarea','select','input[type="file"]','input[type="checkbox"]','input[type="radio"]'];
+        
+        try {
+            for (let selector of selectors) {
+                const element = document.querySelector(selector);
+                if (element && !element.disabled && !element.readOnly) {
+                    element.focus();
+                    if (document.activeElement === element) {
+                        if (['text', 'email', 'tel', 'url', 'password', 'number'].includes(element.type)) {
+                            element.select();
+                        }
+                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        console.log('Successfully focused element:', element);
+                        return true; // Success
+                    }
                 }
-                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                return; // stop after focusing the first element
+            }
+
+            // If we get here, focus failed - try again if we haven't exceeded max attempts
+            if (attempts < maxAttempts) {
+                setTimeout(tryFocus, 200 * attempts); // Increasing delay
+                return false;
+            }
+                
+        } catch (error) {
+            console.log('Auto-focus attempt failed:', error);
+            if (attempts < maxAttempts) {
+                setTimeout(tryFocus, 200 * attempts);
+                return false;
             }
         }
+        
+        console.log('Auto-focus failed after', attempts, 'attempts');
+        return false;
     }
+
+    // Start the focus attempts
+    tryFocus();
 }
