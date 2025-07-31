@@ -8,10 +8,13 @@ Its core features include robust file upload capabilities, allowing files to be 
 
 ## Features
 
-- **Three Modes:**
+- **Four Core Modes:**
   - `message`: Display formatted informational, success, warning, or error messages.
-  - `form`: Render a dynamic form with multiple field types.
+  - `confirmation`: Present a question with a dynamic set of custom buttons.
   - `dropdown`: Present a single or multi-select dropdown for quick user choices.
+  - `form`: Render a dynamic form with multiple field types.
+- **Rich Text with Markdown:**
+  - Use Markdown to easily format text in `message` and `confirmation` modes with headings, lists, links, and more.
 - **File Uploads:**
   - Upload files as standard record attachments.
   - Upload files directly into a specific File Upload or Image Upload field on a record.
@@ -52,9 +55,10 @@ Displays a simple message to the user.
 
 | Parameter | Type | Description |
 |---|---|---|
-| `message` | String | The main body of text to display. |
+| `message` | String | The main body of text to display. Markdown is supported if `enable_markdown` param is set to `true`. |
 | `message_type` | String | The style of the message. Can be `'info'`, `'success'`, `'warning'`, `'error'`, or `'question'`. Defaults to `'info'`. |
 | `show_icon` | Boolean | If `false`, the emoji icon will be hidden. Defaults to `true`. |
+| `enable_markdown` | Boolean | If `true`, the `message` text will be parsed as Markdown. Defaults to `false`. |
 
 ### 2. Dropdown Mode
 
@@ -67,7 +71,18 @@ Displays a dropdown select menu.
 | `options` | Array | An array of option objects. See format below. |
 | `allow_multiple` | Boolean | If `true`, the user can select multiple options. Defaults to `false`. |
 
-### 3. Form Mode
+### 3. Confirmation Mode
+
+Displays a message or question with a dynamic set of custom buttons.
+**`type: 'confirmation'`**
+
+| Parameter | Type | Required? | Description |
+|---|---|---|---|
+| `message` | String | Yes | The question or statement to present to the user. Markdown is supported if `enable_markdown` param is set to `true`. |
+| `buttons` | Array | No | An array of strings that will become the button labels. The widget intelligently styles buttons based on common keywords like "Delete" or "Cancel". Defaults to `['Cancel', 'OK']`|
+| `enable_markdown` | Boolean | No | If `true`, the `message` text will be parsed as Markdown. Defaults to `false`. |
+
+### 4. Form Mode
 
 Renders a dynamic form based on a `fields` array. This is the most powerful mode.
 **`type: 'form'`**
@@ -90,7 +105,23 @@ Each object in the `fields` array defines one form element.
 | `required` | Boolean | If `true`, the user must provide a value for this field before submitting. |
 
 ---
-### Detailed Field Type Reference
+## Using Markdown for Messages
+
+When `enable_markdown: true` is set for `message` or `confirmation` modes, you can format your `message` text using the following syntax. Create multi-line strings in your Client Script by joining an array with `\n`.
+
+| Style | Syntax | Example |
+|---|---|---|
+| Heading 1 | `# Heading Text` | `# Action Required` |
+| Heading 3 | `### Sub-heading` | `### Review these items:` |
+| Bold | `**text**` or `__text__` | `**This is important**` |
+| Italic | `*text*` or `_text_` | `*Please verify all details*` |
+| Blockquote | `> text` | `> This is a blockquote.` |
+| Unordered List| `- Item 1\n- Item 2` | `- Update address.\n- Confirm phone.` |
+| Inline Code | `` `text` `` | `Check the \`Internal_Notes\` field.` |
+| Hyperlink | `[Link Text](URL)` | `[View Guide](https://example.com)` |
+
+---
+## Detailed Field Type Reference
 
 #### Basic Inputs
 `type: 'text' | 'email' | 'tel' | 'url' | 'password' | 'number'`
@@ -156,12 +187,24 @@ If `allow_multiple: false`:
   "display_value": "Web Search"
 }
 ```
+
 If `allow_multiple: true`:
+
 ```json
 [
   { "actual_value": "web_search", "display_value": "Web Search" },
   { "actual_value": "referral", "display_value": "Partner Referral" }
 ]
+```
+
+#### For a `confirmation` submission:
+The response object's `selection` property will contain the string of the button the user clicked (e.g., `"OK"`, `"Cancel"`, `"Yes, Proceed"`).
+```json
+{
+  "success": true,
+  "type": "confirmation",
+  "selection": "OK"
+}
 ```
 
 #### For a `form` submission:
@@ -188,7 +231,7 @@ The following examples demonstrate how to launch and configure the widget from a
 
 This example shows a basic success message to the user.
 
-![Widget Example - Simple Message](https://i.imgur.com/iR3Wzpz.png)
+![Widget Example - Simple Message](https://i.imgur.com/eloiQHe.png)
 
 ```javascript
 // --- show success message ---
@@ -213,7 +256,53 @@ const popup_config = {
 ZDK.Client.openPopup(popup_config, widget_config);
 ```
 
-### Example 2: Simple Dropdown Selector
+### Example 2: Message with Markdown Formatting
+
+This example demonstrates how to display a message popup with markdown formatted text. This example includes headings, lists, links, and code blocks.
+
+![Widget Example - Message with Markdown Formatting](https://i.imgur.com/ZpFDiSw.png)
+
+```javascript
+
+const markdown_lines = [
+    '# Action Required',
+    '### Please review the following items:',
+    '> This is a blockquote to draw attention.',
+    '', 
+    'You need to update the contact\'s primary address and verify their new phone number.',
+    '',
+    '- Item 1: *Update the address.*',
+    '- Item 2: __Verify the phone number.__',
+    '- Item 3: Check the status in the `Internal Notes` section.',
+    '',
+    'For more details, [click here to view the official guide](https://www.example.com).'
+];
+
+const markdown_message = markdown_lines.join('\n');
+
+var widget_config = {
+    type: 'message',
+    message_type: 'info',
+    title: 'Update Contact Information',
+    message: markdown_message,
+    enable_markdown: true,
+    show_icon: false,
+    close_on_escape: true
+};
+
+var popup_config = {
+    api_name: 'dynamic_widget',
+    type: 'widget',
+    header: undefined,
+    height: '450px',
+    width: '500px',
+    center: true
+};
+
+ZDK.Client.openPopup(popup_config, widget_config);
+```
+
+### Example 3: Simple Dropdown Selector
 
 This example prompts the user to choose a lead source from a predefined list.
 
@@ -255,7 +344,44 @@ if (response.success) {
 }
 ```
 
-### Example 3: File upload to a field
+### Example 4: Simple Confirmation with Default Buttons and Markdown Text
+
+This is the quickest way to ask the user a simple "yes/no" style question. By omitting the `buttons` parameter, the widget will automatically display "Cancel" and "OK" buttons.
+
+![Widget Example - Simple Confirmation with Default Buttons and Markdown Text](https://i.imgur.com/BY9M8oK.png)
+
+```javascript
+
+var widget_config = {
+    type: 'confirmation',
+    title: 'Confirm Action',
+    message: '__Are you sure__ you wish to proceed with this action?',
+    enable_markdown: true
+    // the 'buttons' parameter is omitted to use the default ['Cancel', 'OK']
+};
+
+const popup_config = {
+    api_name: 'dynamic_widget',
+    type: 'widget',
+    header: undefined,
+    height: '280px',
+    width: '400px',
+    center: true
+};
+
+// --- launch the widget --- 
+const response = ZDK.Client.openPopup(popup_config, widget_config);
+
+// --- handle the response ---
+if (response.success) {
+    // response.data.selection will contain the value of the selected button
+    console.log("User selected:", response.data.selection);
+} else {
+    console.log("User cancelled the selection.");
+}
+```
+
+### Example 5: File upload to a field
 
 This uploads a file directly into a "File Upload" field in Zoho CRM and renames the file for consistency.
 
@@ -305,7 +431,7 @@ const popup_config = {
 ZDK.Client.openPopup(popup_config, widget_config);
 ```
 
-### Example 4: Multi Field Form
+### Example 6: Multi Field Form
 
 This example demonstrates how to configure a form with every available field type.
 
