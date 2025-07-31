@@ -102,7 +102,7 @@ html, body {
 
 /*
     █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
-    █                        GENERAL FORM STYLING                          █
+    █                        general form styling                          █
     █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
 */
 
@@ -198,56 +198,43 @@ select[multiple] option:checked {
     color: white;
 }
 
-
 /* 
     █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
-    █                     COMPONENT-SPECIFIC STYLES                        █
+    █                     component-specific styles                        █
     █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
 */
 
-.widget-title {
-    color: var(--color-text-dark);
-    margin: 0 0 20px 0;
-    font-weight: 600;
-    text-align: left;
-    font-size: 17px; 
-}
+.widget-title { color: var(--color-text-dark); margin: 0 0 20px 0; font-weight: 600; text-align: left; font-size: 17px; }
 
 /* --- message component --- */
-.message-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0 20px;
-    height: 100%;
-}
+.message-content { display: flex; flex-direction: column; justify-content: center; padding: 0 20px; height: 100%; }
 
 .message-text { line-height: 1.6; font-size: 15px; }
 .message-icon { font-size: 30px; margin-bottom: 20px; }
 
 /* message backgrounds & text colors */
 .message-info-bg { background-color: #e3f2fd; }
-.message-info-bg h2, .message-info-bg .message-text { color: #1565c0; }
+.message-info-bg .widget-title { color: #1565c0; } 
+.message-info-bg .message-text { color: var(--color-text-dark); } 
 
 .message-success-bg { background-color: #e8f5e8; }
-.message-success-bg h2, .message-success-bg .message-text { color: #2e7d32; }
+.message-success-bg .widget-title { color: #2e7d32; }
+.message-success-bg .message-text { color: var(--color-text-dark); }
 
 .message-warning-bg { background-color: #fff3cd; }
-.message-warning-bg h2, .message-warning-bg .message-text { color: #ef6c00; }
+.message-warning-bg .widget-title { color: #ef6c00; }
+.message-warning-bg .message-text { color: var(--color-text-dark); }
 
 .message-error-bg { background-color: #ffebee; }
-.message-error-bg h2, .message-error-bg .message-text { color: #c62828; }
+.message-error-bg .widget-title { color: #c62828; }
+.message-error-bg .message-text { color: var(--color-text-dark); }
 
 .message-question-bg { background-color: #f3e5f5; }
-.message-question-bg h2, .message-question-bg .message-text { color: #7b1fa2; }
+.message-question-bg .widget-title { color: #7b1fa2; }
+.message-question-bg .message-text { color: var(--color-text-dark); }
 
 /* --- file upload component --- */
-.file-upload-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+.file-upload-wrapper { position: relative; display: flex; align-items: center; gap: 10px; }
 .file-upload-wrapper input[type="file"] { display: none; } /* hide original input */
 
 .file-upload-label {
@@ -292,10 +279,59 @@ select[multiple] option:checked {
 #uploadStatusMessage.status-info { display: block; background-color: #e3f2fd; border-color: var(--color-primary); color: #1565c0; }
 #uploadStatusMessage.status-warning { display: block; background-color: #fff3cd; border-color: var(--color-warning); color: #ef6c00; }
 
+/* ╔──────────────────────────────────────────────────╗ */
+/* ║             markdown content styles              ║ */
+/* ╚──────────────────────────────────────────────────╝ */
+
+.message-text h1,
+.message-text h3 {
+    margin-top: 0;
+    margin-bottom: 0.5em;
+    font-weight: 600;
+    line-height: 1.3;
+}
+.message-text h1 { font-size: 1.25rem; }
+.message-text h3 { font-size: 1.1rem; }
+
+.message-text p {
+    margin-top: 0;
+    margin-bottom: 1em; /* add space between paragraphs */
+}
+.message-text p:last-child {
+    margin-bottom: 0; /* remove margin from the last paragraph */
+}
+
+.message-text a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+.message-text a:hover {
+    text-decoration: underline;
+}
+
+.message-text code {
+    background-color: #e9ecef;
+    padding: 0.2em 0.4em;
+    margin: 0;
+    font-size: 85%;
+    border-radius: var(--radius-default);
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.message-text blockquote {
+    margin: 0 0 1em 0;
+    padding: 0.5em 1em;
+    color: var(--color-text-light);
+    border-left: 0.25em solid var(--color-border);
+}
+.message-text blockquote p {
+    margin-bottom: 0;
+}
 
 /*
     █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
-    █                            BUTTON STYLES                             █
+    █                            button styles                             █
     █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
 */
 
@@ -334,10 +370,13 @@ select[multiple] option:checked {
 .negative-outline-btn { background-color: transparent; color: var(--color-text-light); border-color: var(--color-border); }
 .negative-outline-btn:hover { background-color: #f1f1f1; color: var(--color-text-default); }
 
+/* destructive action button */
+.destructive-btn { background-color: var(--color-error); color: white; border-color: var(--color-error); }
+.destructive-btn:hover { background-color: var(--color-error-dark); border-color: var(--color-error-dark); }
 
 /*
     █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
-    █                        UTILITY & VALIDATION                          █
+    █                        utility & validation                          █
     █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
 */
 
@@ -359,10 +398,9 @@ select[multiple] option:checked {
     display: block;
 }
 
-
 /*
     █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
-    █                          RESPONSIVE DESIGN                           █
+    █                          responsive design                           █
     █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
 */
 
