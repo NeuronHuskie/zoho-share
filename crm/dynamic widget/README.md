@@ -1,10 +1,12 @@
 <img src="https://www.zohowebstatic.com/sites/zweb/images/productlogos/crm.svg" width="100" alt="create-widget" style="border: 0px solid #666; padding: 5px;">
 
-&nbsp;
-#### Updates
-> - **2025-07-31**: Added `confirmation` mode to display a simple widget with custom button names (eg. "Yes" / "No")
-> - **2025-07-31**: Added markdown support
-> - **2025-08-06**: Added `default_value` param for `fields`
+### Updates
+> **2025-07-31**
+> - [x] Added `confirmation` mode to display a simple widget with custom button names (eg. "Yes" / "No")
+> - [x] Added markdown support
+> 
+> **2025-08-06**
+> - [x] Added `default_value` param for `fields`
 
 # Dynamic Zoho CRM Widget
 
@@ -600,4 +602,5 @@ var data_config = {
 const popup_config = { api_name: 'dynamic_widget', type: 'widget', height: '90vh', width: '600px' };
 
 ZDK.Client.openPopup(popup_config, data_config);
+
 ```
