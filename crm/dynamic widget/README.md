@@ -1,13 +1,5 @@
 <img src="https://www.zohowebstatic.com/sites/zweb/images/productlogos/crm.svg" width="100" alt="create-widget" style="border: 0px solid #666; padding: 5px;">
 
-### Updates
-> **2025-07-31**
-> - [x] Added `confirmation` mode to display a simple widget with custom button names (eg. "Yes" / "No")
-> - [x] Added markdown support
-> 
-> **2025-08-06**
-> - [x] Added `default_value` param for `fields`
-
 # Dynamic Zoho CRM Widget
 
 A versatile, configurable Zoho CRM widget designed to be launched from Zoho CRM Client Scripts. This widget can dynamically display user-friendly messages, complex forms with a wide variety of field types, and dropdown selectors.
@@ -604,3 +596,13 @@ const popup_config = { api_name: 'dynamic_widget', type: 'widget', height: '90vh
 ZDK.Client.openPopup(popup_config, data_config);
 
 ```
+
+---
+
+### Changelog
+> **[1.2.0] - 2025-08-06**
+> - Added `default_value` param for `fields`
+> 
+> **[1.1.0] - 2025-07-31**
+> - Added `confirmation` mode to display a simple widget with custom button names
+> - Added markdown support
