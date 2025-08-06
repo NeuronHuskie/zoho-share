@@ -12,22 +12,31 @@ let statusMessageEl;
 //      WIDGET INITIALIZATION
 // ════════════════════════════════════════════════════════════════════════
 
-ZOHO.embeddedApp.on("PageLoad", data => {
+/**
+ * Main entry point for the widget. This listener is attached immediately
+ * to ensure it catches the PageLoad event without any race conditions.
+ */
+ZOHO.embeddedApp.on("PageLoad", function(data) {
     console.log("Widget loaded with data:", data);
 
+    // Extract configuration from the passed data.
     widgetConfig = data || {};
+    currentEntity = data.crm_module;
+    currentRecordId = data.crm_record_id;
 
-    currentEntity = data.module;
-    currentRecordId = data.record_id;
-    console.log("Current Entity:", currentEntity, "Record ID:", currentRecordId);
-
+    // Build the dynamic interface.
     buildDynamicInterface();
 
+    // Setup keyboard event listeners after a short delay to ensure DOM is ready.
     setTimeout(() => {
         setupKeyboardControls();
     }, 200);
 });
 
+/**
+ * Initialize the Zoho SDK connection. This call should be made after
+ * all event listeners like on("PageLoad") have been set up.
+ */
 ZOHO.embeddedApp.init();
 
 // ════════════════════════════════════════════════════════════════════════
@@ -445,27 +454,49 @@ function closeWidget() {
 // ════════════════════════════════════════════════════════════════════════
 //      FORM FIELD BUILDER HELPERS
 // ════════════════════════════════════════════════════════════════════════
+
 function buildInputField(field, required, placeholder) {
     const requiredHtml = field.required ? ' <span class="required-indicator">*</span>' : '';
-    return `<label for="${field.name}">${field.label}${requiredHtml}</label> <input type="${field.type || 'text'}" id="${field.name}" name="${field.name}" placeholder="${placeholder}" ${field.min ? `min="${field.min}"` : ''} ${field.max ? `max="${field.max}"` : ''} ${field.step ? `step="${field.step}"` : ''} ${field.pattern ? `pattern="${field.pattern}"` : ''} autocomplete="off" ${required} >`;
+    let defaultValue = '';
+
+    if (['date', 'time', 'datetime-local'].includes(field.type)) {
+        defaultValue = formatDefaultDateValue(field);
+    } else {
+        defaultValue = field.default_value || '';
+    }
+    
+    return ` <label for="${field.name}">${field.label}${requiredHtml}</label> <input type="${field.type || 'text'}" id="${field.name}" name="${field.name}" placeholder="${placeholder}" value="${defaultValue}" autocomplete="off" ${required} > `;
 }
 
 function buildTextareaField(field, required, placeholder) {
     const requiredHtml = field.required ? ' <span class="required-indicator">*</span>' : '';
-    return `<label for="${field.name}">${field.label}${requiredHtml}</label><textarea id="${field.name}" name="${field.name}" rows="${field.rows || 4}" placeholder="${placeholder}" ${field.maxlength ? `maxlength="${field.maxlength}"` : ''} ${required}></textarea>`;
+    const defaultValue = field.default_value || '';
+    return ` <label for="${field.name}">${field.label}${requiredHtml}</label> <textarea id="${field.name}" name="${field.name}" rows="${field.rows || 4}" placeholder="${placeholder}" ${required} >${defaultValue}</textarea> `;
 }
 
 function buildSelectField(field, required) {
     const multiple = field.multiple ? 'multiple' : '';
     const size = field.multiple ? `size="${Math.min(field.options?.length || 3, 5)}"` : '';
     const requiredHtml = field.required ? ' <span class="required-indicator">*</span>' : '';
+    const defaultValue = field.default_value;
     let selectHTML = `<label for="${field.name}">${field.label}${requiredHtml}</label><select id="${field.name}" name="${field.name}" ${multiple} ${size} ${required}>`;
     if (!field.multiple && !field.required) { selectHTML += `<option value="">-- Select ${field.label} --</option>`; }
     if (field.options) {
         field.options.forEach(option => {
             const actualValue = option.actual_value || option.value || option;
             const displayValue = option.display_value || option.text || option;
-            const selected = option.selected ? 'selected' : '';
+            let selected = '';
+            if (defaultValue) {
+                if (field.multiple && Array.isArray(defaultValue)) {
+                    if (defaultValue.includes(actualValue)) {
+                        selected = 'selected';
+                    }
+                } else {
+                    if (defaultValue === actualValue) {
+                        selected = 'selected';
+                    }
+                }
+            }
             selectHTML += `<option value="${actualValue}" ${selected}>${displayValue}</option>`;
         });
     }
@@ -488,13 +519,16 @@ function buildCheckboxField(field, required) {
         field.options.forEach((option, index) => {
             const actualValue = option.actual_value || option.value || option;
             const displayValue = option.display_value || option.text || option;
-            const checked = option.checked ? 'checked' : '';
+            let checked = '';
+            if (Array.isArray(defaultValue) && defaultValue.includes(actualValue)) {
+                checked = 'checked';
+            }
             checkboxHTML += `<div class="checkbox-item"><input type="checkbox" id="${field.name}_${index}" name="${field.name}" value="${actualValue}" ${checked}><label for="${field.name}_${index}" class="checkbox-label">${displayValue}</label></div>`;
         });
         checkboxHTML += `</div>`;
         return checkboxHTML;
     } else {
-        const checked = field.checked ? 'checked' : '';
+        const checked = defaultValue === true ? 'checked' : '';
         return `<div class="checkbox-item single-checkbox"><input type="checkbox" id="${field.name}" name="${field.name}" value="${field.value || 'true'}" ${checked} ${required}><label for="${field.name}" class="checkbox-label">${field.label}${requiredHtml}</label></div>`;
     }
 }
@@ -502,11 +536,12 @@ function buildCheckboxField(field, required) {
 function buildRadioField(field, required) {
     const requiredHtml = field.required ? ' <span class="required-indicator">*</span>' : '';
     let radioHTML = `<label class="field-label">${field.label}${requiredHtml}</label><div class="radio-group">`;
+    const defaultValue = field.default_value;
     if (field.options) {
         field.options.forEach((option, index) => {
             const actualValue = option.actual_value || option.value || option;
             const displayValue = option.display_value || option.text || option;
-            const checked = option.checked ? 'checked' : '';
+            const checked = (defaultValue === actualValue) ? 'checked' : '';
             radioHTML += `<div class="radio-item"><input type="radio" id="${field.name}_${index}" name="${field.name}" value="${actualValue}" ${checked} ${required}><label for="${field.name}_${index}" class="radio-label">${displayValue}</label></div>`;
         });
     }
@@ -586,6 +621,60 @@ function resetContainerBackground() {
     const container = document.querySelector('.container');
     if (container) {
         container.className = 'container'; // resets to just the base class
+    }
+}
+
+// --- Date Conversion ---
+
+/**
+ * Parses and formats a default date/time value to be HTML input-compatible.
+ * Accepts a JS Date object or a string (YYYY-MM-DD or ISO format).
+ * This version correctly handles timezone issues for YYYY-MM-DD strings.
+ * @param {Object} field The field configuration object.
+ * @returns {String} The correctly formatted string for the input's 'value' attribute, or an empty string.
+ */
+function formatDefaultDateValue(field) {
+    if (!field.default_value) {
+        return ''; // no default value provided
+    }
+
+    let dateObj;
+
+    // check if the input is a string specifically in the yyyy-mm-dd format
+    if (typeof field.default_value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(field.default_value)) {
+        // if it is, we parse it manually to avoid the utc conversion trap. "2025-01-01" is split into parts ["2025", "01", "01"]
+        const parts = field.default_value.split('-');
+        // we create the date using these parts. the month is 0-indexed in the date constructor, so we subtract 1. this creates a date at midnight in the user's local timezone.
+        dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+    } else {
+        // for all other formats (like a js date object or a full iso string with a timezone), let the constructor handle it normally
+        dateObj = new Date(field.default_value);
+    }
+
+    // check if the created date is valid.
+    if (isNaN(dateObj.getTime())) {
+        console.warn(`Invalid default_value for date field '${field.name}':`, field.default_value);
+        return '';
+    }
+
+    // helper function for padding numbers with a leading zero
+    const pad = (num) => String(num).padStart(2, '0');
+
+    const year = dateObj.getFullYear();
+    const month = pad(dateObj.getMonth() + 1); // month is 0-indexed
+    const day = pad(dateObj.getDate());
+    const hours = pad(dateObj.getHours());
+    const minutes = pad(dateObj.getMinutes());
+
+    switch (field.type) {
+        case 'date':
+            return `${year}-${month}-${day}`;
+        case 'datetime-local':
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        case 'time':
+            return `${hours}:${minutes}`;
+        default:
+            return field.default_value || ''; 
     }
 }
 
@@ -673,42 +762,50 @@ function focusFirstElement() {
 
     function tryFocus() {
         attempts++;
-        const selectors = ['input[type="text"]','input[type="email"]','input[type="tel"]','input[type="number"]','input[type="password"]','input[type="url"]','input[type="date"]','input[type="time"]','input[type="datetime-local"]','textarea','select','input[type="file"]','input[type="checkbox"]','input[type="radio"]'];
         
+        // finds all focusable form fields in the order they appear
+        const focusableSelector = 'input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled])';
+
         try {
-            for (let selector of selectors) {
-                const element = document.querySelector(selector);
-                if (element && !element.disabled && !element.readOnly) {
-                    element.focus();
-                    if (document.activeElement === element) {
-                        if (['text', 'email', 'tel', 'url', 'password', 'number'].includes(element.type)) {
-                            element.select();
-                        }
-                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        console.log('Successfully focused element:', element);
-                        return true; // Success
+            // use queryselectorall to get a list of all focusable elements in dom order
+            const focusableElements = document.querySelectorAll(focusableSelector);
+
+            if (focusableElements.length > 0) {
+                // the first element in the list is the one we want to focus
+                const firstElement = focusableElements[0];
+                
+                firstElement.focus();
+                
+                // verify that the focus was successful
+                if (document.activeElement === firstElement) {
+                    // for text-like inputs, also select the content
+                    if (['text', 'email', 'tel', 'url', 'password', 'number'].includes(firstElement.type)) {
+                        firstElement.select();
                     }
+                    firstElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    console.log('Successfully focused the first element:', firstElement);
+                    return true; // success! stop the retry attempts
                 }
             }
 
-            // If we get here, focus failed - try again if we haven't exceeded max attempts
+            // if we get here, focus failed or no elements were found. retry if we have attempts left.
             if (attempts < maxAttempts) {
-                setTimeout(tryFocus, 200 * attempts); // Increasing delay
+                setTimeout(tryFocus, 200 * attempts);
                 return false;
             }
                 
         } catch (error) {
-            console.log('Auto-focus attempt failed:', error);
+            console.error('Auto-focus attempt failed:', error);
             if (attempts < maxAttempts) {
                 setTimeout(tryFocus, 200 * attempts);
                 return false;
             }
         }
         
-        console.log('Auto-focus failed after', attempts, 'attempts');
+        console.warn('Auto-focus failed after', attempts, 'attempts');
         return false;
     }
 
-    // Start the focus attempts
+    // start the focus attempts
     tryFocus();
 }
