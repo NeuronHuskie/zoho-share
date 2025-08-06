@@ -1,5 +1,11 @@
 <img src="https://www.zohowebstatic.com/sites/zweb/images/productlogos/crm.svg" width="100" alt="create-widget" style="border: 0px solid #666; padding: 5px;">
 
+&nbsp;
+#### Updates
+> - **2025-07-31**: Added `confirmation` mode to display a simple widget with custom button names (eg. "Yes" / "No")
+> - **2025-07-31**: Added markdown support
+> - **2025-08-06**: Added `default_value` param for `fields`
+
 # Dynamic Zoho CRM Widget
 
 A versatile, configurable Zoho CRM widget designed to be launched from Zoho CRM Client Scripts. This widget can dynamically display user-friendly messages, complex forms with a wide variety of field types, and dropdown selectors.
@@ -103,6 +109,7 @@ Each object in the `fields` array defines one form element.
 | `label` | String | **Required.** The user-friendly label displayed for the field. |
 | `type` | String | **Required.** The type of form field to render. See the full list below. |
 | `required` | Boolean | If `true`, the user must provide a value for this field before submitting. |
+| `default_value`| Any | Optional. A pre-filled value for the field. For multi-select and checkbox groups, this must be an `Array`. For a single checkbox, use a `Boolean` (`true`). Ignored for `file` types. |
 
 ---
 ## Using Markdown for Messages
@@ -525,4 +532,72 @@ if (response && response.success) {
 } else {
     console.log("Widget was closed or cancelled.");
 }
+```
+
+### Example 7: Form with Default Values
+
+This example demonstrates how to pre-populate a form, which is ideal for "edit" scenarios.
+
+```javascript
+var data_config = {
+    type: 'form',
+    title: 'Edit Project Details',
+    crm_module: 'Deals',
+    crm_record_id: '12345',
+    fields: [
+        {
+            name: 'project_name',
+            label: 'Project Name',
+            type: 'text',
+            required: true,
+            default_value: 'Q4 Marketing Campaign' // string for text input
+        },
+        {
+            name: 'project_stage',
+            label: 'Project Stage',
+            type: 'select',
+            required: true,
+            default_value: 'in_progress', // string for single select
+            options: [
+                { actual_value: 'planning', display_value: '1. Planning' },
+                { actual_value: 'in_progress', display_value: '2. In Progress' },
+                { actual_value: 'complete', display_value: '4. Complete' }
+            ]
+        },
+        {
+            name: 'team_members',
+            label: 'Assign Team Members',
+            type: 'select',
+            multiple: true,
+            required: true,
+            default_value: ['user_1', 'user_3'], // array for multi-select
+            options: [
+                { actual_value: 'user_1', display_value: 'Alice' },
+                { actual_value: 'user_2', display_value: 'Bob' },
+                { actual_value: 'user_3', display_value: 'Charlie' }
+            ]
+        },
+        {
+            name: 'required_services',
+            label: 'Required Services',
+            type: 'checkbox',
+            required: true,
+            default_value: ['design'], // array for checkbox group
+            options: [
+                { actual_value: 'design', display_value: 'Graphic Design' },
+                { actual_value: 'copywriting', display_value: 'Copywriting' }
+            ]
+        },
+        { 
+            name: 'requires_nda', 
+            label: 'This project requires an NDA', 
+            type: 'checkbox',
+            default_value: true // boolean for single checkbox
+        }
+    ]
+};
+
+const popup_config = { api_name: 'dynamic_widget', type: 'widget', height: '90vh', width: '600px' };
+
+ZDK.Client.openPopup(popup_config, data_config);
 ```
