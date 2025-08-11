@@ -600,9 +600,13 @@ ZDK.Client.openPopup(popup_config, data_config);
 ---
 
 ### Changelog
+> **[1.2.1] - 2025-08-11**
+> - Edited script.js to override the marked link renderer to ensure markdown hyperlinks open in a new tab
+> 
 > **[1.2.0] - 2025-08-06**
 > - Added `default_value` param for `fields`
 > 
 > **[1.1.0] - 2025-07-31**
 > - Added `confirmation` mode to display a simple widget with custom button names
 > - Added markdown support
+
