@@ -12,6 +12,23 @@ let statusMessageEl;
 //      WIDGET INITIALIZATION
 // ════════════════════════════════════════════════════════════════════════
 
+if (typeof marked !== 'undefined') {
+    // override the 'marked' default link renderer to ensure hyperlinks open in a new tab
+    const renderer = new marked.Renderer();
+    const linkRenderer = renderer.link;
+
+    renderer.link = (href, title, text) => {
+        const html = linkRenderer.call(renderer, href, title, text);
+        return html.replace(/^<a /, '<a target="_blank" rel="noopener noreferrer" ');
+    };
+
+    marked.setOptions({
+        renderer: renderer
+    });
+    
+    console.log("Marked.js configured to open links in a new tab.");
+}
+
 /**
  * Main entry point for the widget. This listener is attached immediately
  * to ensure it catches the PageLoad event without any race conditions.
